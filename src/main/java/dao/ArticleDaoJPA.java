@@ -30,7 +30,12 @@ public class ArticleDaoJPA implements Dao<Article, NewArticle>{
 
     @Override
     public Article get(long id) {
-        throw new UnsupportedOperationException();
+
+        em.getTransaction().begin();
+
+       ArticleEntity a = (ArticleEntity) em.createQuery("select a from ArticleEntity a where id= " +id).getSingleResult();
+        em.getTransaction().commit();
+        return new Article(a);
     }
 
     @Override
@@ -44,7 +49,9 @@ public class ArticleDaoJPA implements Dao<Article, NewArticle>{
 
     @Override
     public void delete(Article obj) {
-        throw new UnsupportedOperationException();
+        em.getTransaction().begin();
+        em.remove(new ArticleEntity(obj));
+        em.getTransaction().commit();
     }
 
     @Override
