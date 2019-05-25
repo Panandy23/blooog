@@ -19,10 +19,19 @@ public class ArticleEntity {
 
     private LocalDateTime created;
 
+    public ArticleEntity() {
+    }
 
     public ArticleEntity (String content){
         this.content = content;
         this.created = LocalDateTime.now();
+    }
+
+    public ArticleEntity(NewArticle na){
+        this.content = na.content;
+        this.title = na.title;
+        this.created = LocalDateTime.now();
+
     }
 
     public long getId() {
