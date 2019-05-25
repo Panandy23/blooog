@@ -22,26 +22,33 @@ public class ArticleDaoJPA implements Dao<Article, NewArticle>{
     public List<Article> getAll(){
         em.getTransaction().begin();
       Query q = em.createQuery("From ArticleEntity");
-      return List.ofAll(q.getResultStream());
+      List<Article> result = List.ofAll(q.getResultStream()
+      .map(e -> new Article((ArticleEntity) e)));
+      em.getTransaction().commit();
+      return result;
     }
 
     @Override
     public Article get(long id) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void save(NewArticle obj) {
+        ArticleEntity ae = new ArticleEntity(obj);
+        em.getTransaction().begin();
+        em.persist(ae);
+        em.getTransaction().commit();
 
     }
 
     @Override
     public void delete(Article obj) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void update(Article obj) {
-
+        throw new UnsupportedOperationException();
     }
 }
