@@ -56,8 +56,8 @@ public class ArticleServlet extends HttpServlet {
             break;
 
             case "view": {
-                long id = Long.parseLong(req.getParameter("id"));
-                req.setAttribute("article", repo.get(id));
+                Parse.parseLong(req.getParameter("id")).ifPresent(id -> repo.get(id).ifPresent(a -> req.setAttribute("article", a)));
+
                 RequestDispatcher rd = req.getRequestDispatcher("view_article.jsp");
                 rd.forward(req, resp);
             }
@@ -65,26 +65,48 @@ public class ArticleServlet extends HttpServlet {
 
 
             case "delete": {
-              Parse.parseLong(req.getParameter("id")).ifPresent(id -> repo.remove(id));
-              resp.sendRedirect("article?action=viewAll");
+                Parse.parseLong(req.getParameter("id")).ifPresent(id -> repo.remove(id));
+                resp.sendRedirect("article?action=viewAll");
+            }
+            break;
+
+            case "updateTitle": {
+                Parse.parseLong(req.getParameter("id")).ifPresent(id ->
+                    repo.get(id)
+                            .ifPresent(a-> {
+                                        req.setAttribute("article", a);
+                                    }));
+
+                    RequestDispatcher rd = req.getRequestDispatcher("update_title.jsp");
+
+                        rd.forward(req, resp);
+
             }
             break;
         }
-        }
-
+    }
 
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
 
-        switch(action){
-            case "add":
+        switch (action) {
+            case "add": {
                 String title = Encoding.encode(req.getParameter("title"));
                 String content = Encoding.encode(req.getParameter("content"));
                 repo.addArticle(new NewArticle(content, title));
                 resp.sendRedirect("article?action=viewAll");
                 break;
+            }
+            case "update": {
+                String title = Encoding.encode(req.getParameter("title"));
+                Parse.parseLong(req.getParameter("id"))
+                        .ifPresent(id -> repo.changeTitle(id, title));
+                resp.sendRedirect("article?action=viewAll");
+                break;
+            }
+
         }
     }
 }
