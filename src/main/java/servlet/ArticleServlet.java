@@ -5,6 +5,7 @@ import entity.Article;
 import entity.ArticleEntity;
 import entity.NewArticle;
 import helper.Encoding;
+import helper.Parse;
 import io.vavr.collection.List;
 import repository.ArticleRepository;
 
@@ -64,12 +65,10 @@ public class ArticleServlet extends HttpServlet {
 
 
             case "delete": {
-                long id = Long.parseLong(req.getParameter("id"));
-                repo.remove(id);
-
-                break;
-
+              Parse.parseLong(req.getParameter("id")).ifPresent(id -> repo.remove(id));
+              resp.sendRedirect("article?action=viewAll");
             }
+            break;
         }
         }
 
